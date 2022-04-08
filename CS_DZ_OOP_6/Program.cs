@@ -10,26 +10,26 @@ namespace CS_DZ_OOP_6
     {
         static void Main(string[] args)
         {
-            List<Product> salesman = new List<Product>() { new Product("Мыло", 20), new Product("Печенье", 30), new Product("Сахар", 100), new Product("Чипсы", 80) };
-            Magazine magazine = new Magazine(salesman);
+            List<Product> salesmanProducts = new List<Product>() { new Product("Мыло", 20), new Product("Печенье", 30), new Product("Сахар", 100), new Product("Чипсы", 80) };
+            Magazine magazine = new Magazine(salesmanProducts);
+            Player playerMoney = new Player(300);
+
             Console.WriteLine("Добро пожаловать в магазин!");
 
-            magazine.Work();
+            magazine.Work(playerMoney);
         }
     }
 
     class Magazine
     {
         private List<Product> _salesmanProducts;
-        private List<Product> _playerProducts = new List<Product>();
-
-        Player player = new Player(300);
 
         public Magazine(List<Product> salesman)
         {
             _salesmanProducts = salesman;
         }
-        public void Work()
+
+        public void Work(Player player)
         {
             bool shoping = true;
 
@@ -50,10 +50,10 @@ namespace CS_DZ_OOP_6
                         ShowSalesmanProducts();
                         break;
                     case "2":
-                        Buy();
+                        Buy(player);
                         break;
                     case "3":
-                        ShowPlayerProducts();
+                        ShowPlayerProducts(player);
                         break;
                     case "4":
                         shoping = false;
@@ -65,7 +65,8 @@ namespace CS_DZ_OOP_6
         private void ShowSalesmanProducts()
         {
             Console.Clear();
-            if(_playerProducts.Count > 0)
+
+            if(_salesmanProducts.Count > 0)
             {
                 Console.WriteLine("В магазине есть - ");
                 foreach (var product in _salesmanProducts)
@@ -81,7 +82,7 @@ namespace CS_DZ_OOP_6
             Console.Clear();
         }
 
-        private void Buy()
+        private void Buy(Player player)
         {
             Console.Clear();
             Console.WriteLine("Введите что хотите купить");
@@ -93,7 +94,7 @@ namespace CS_DZ_OOP_6
                 {
                     if(userInput == product.ProductName && player.Money >= product.ProductPrice)
                     {
-                        _playerProducts.Add(product);
+                        player.PlayerBuy(product);
                         player.Pay(product.ProductPrice);
                         Console.WriteLine(product.ProductName + " куплен!");
                         _salesmanProducts.Remove(product);
@@ -109,24 +110,16 @@ namespace CS_DZ_OOP_6
             Console.Clear();
         }
 
-        private void ShowPlayerProducts()
+        private void ShowPlayerProducts(Player playerProducts)
         {
-            Console.Clear();
-            if(_playerProducts.Count > 0)
-            {
-                Console.WriteLine("Мы купили - ");
-                foreach (var product in _playerProducts)
-                {
-                    Console.WriteLine(product.ProductName);
-                }
-            }
-            Console.ReadKey();
-            Console.Clear();
+            playerProducts.ShowProducts();
         }
     }
 
     class Player
     {
+        private List<Product> _playerProducts = new List<Product>();
+
         public int Money { get; private set; }
 
         public Player(int money)
@@ -137,6 +130,23 @@ namespace CS_DZ_OOP_6
         public void Pay(int productPrice)
         {
             Money -= productPrice;
+        }
+
+        public void PlayerBuy(Product newProduct)
+        {
+            _playerProducts.Add(newProduct);
+        }
+
+        public void ShowProducts()
+        {
+            Console.Clear();
+            Console.WriteLine("Мы купили");
+            foreach (var item in _playerProducts)
+            {
+                Console.WriteLine(item.ProductName);
+            }
+            Console.ReadLine();
+            Console.Clear();
         }
     }
 
